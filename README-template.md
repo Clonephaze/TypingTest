@@ -1,11 +1,12 @@
 # Frontend Mentor - Typing Speed Test solution
 
-This is a solution to the [Typing Speed Test challenge on Frontend Mentor](https://www.frontendmentor.io/challenges/typing-speed-test). Frontend Mentor challenges help you improve your coding skills by building realistic projects. 
+This is my solution to the [Typing Speed Test challenge on Frontend Mentor](https://www.frontendmentor.io/challenges/typing-speed-test). The project is a full typing test app built in Nuxt with multiple modes, persistent score tracking, mobile-friendly controls, and a more expanded results experience.
 
 ## Table of contents
 
 - [Overview](#overview)
   - [The challenge](#the-challenge)
+  - [Bonus features](#bonus-features)
   - [Screenshot](#screenshot)
   - [Links](#links)
 - [My process](#my-process)
@@ -13,11 +14,8 @@ This is a solution to the [Typing Speed Test challenge on Frontend Mentor](https
   - [What I learned](#what-i-learned)
   - [Continued development](#continued-development)
   - [Useful resources](#useful-resources)
-  - [AI Collaboration](#ai-collaboration)
+  - [AI collaboration](#ai-collaboration)
 - [Author](#author)
-- [Acknowledgments](#acknowledgments)
-
-**Note: Delete this note and update the table of contents based on what sections you keep.**
 
 ## Overview
 
@@ -27,96 +25,66 @@ Users should be able to:
 
 - View the optimal layout for the interface depending on their device's screen size
 - See hover and focus states for all interactive elements on the page
+- Start a test by typing or by pressing a start button
+- Switch between timed and passage modes
+- Change difficulty, duration, and text category
+- See live WPM, accuracy, and timer feedback while typing
+- View a results screen with personal-best feedback and stored history
 
-### Screenshot
+### Bonus features
 
-![](./screenshot.jpg)
+Alongside the core challenge requirements, I also added a number of bonus features:
 
-Add a screenshot of your solution. The easiest way to do this is to use Firefox to view your project, right-click the page and select "Take a Screenshot". You can choose either a full-height screenshot or a cropped one based on how long the page is. If it's very long, it might be best to crop it.
-
-Alternatively, you can use a tool like [FireShot](https://getfireshot.com/) to take the screenshot. FireShot has a free option, so you don't need to purchase it. 
-
-Then crop/optimize/edit your image however you like, add it to your project, and update the file path in the image above.
-
-**Note: Delete this note and the paragraphs above when you add your screenshot. If you prefer not to add a screenshot, feel free to remove this entire section.**
+- Multiple timed test lengths: 15, 30, 60, and 120 seconds
+- Extra text categories beyond standard passages, including quotes and code-style text
+- A performance history chart on the results screen
+- A keystroke heatmap showing which keys were used most and where errors happened
+- Shareable downloadable result cards
+- Multiple visual themes
+- A focused layout mode for a narrower typing view on larger screen sizes
 
 ### Links
 
-- Solution URL: [Add solution URL here](https://your-solution-url.com)
-- Live Site URL: [Add live site URL here](https://your-live-site-url.com)
+- Solution URL: Frontend Mentor submission pending
+- Live Site URL: Deployment pending
 
 ## My process
 
 ### Built with
 
-- Semantic HTML5 markup
-- CSS custom properties
-- Flexbox
-- CSS Grid
-- Mobile-first workflow
-- [React](https://reactjs.org/) - JS library
-- [Next.js](https://nextjs.org/) - React framework
-- [Styled Components](https://styled-components.com/) - For styles
-
-**Note: These are just examples. Delete this note and replace the list above with your own choices**
+- Nuxt 4
+- Vue 3
+- Pinia
+- SCSS
+- CSS custom properties with theme tokens
+- Local storage for personal bests and test history
+- Responsive layouts for desktop and mobile
 
 ### What I learned
 
-Use this section to recap over some of your major learnings while working through this project. Writing these out and providing code samples of areas you want to highlight is a great way to reinforce your own knowledge.
+This project was a good exercise in balancing design accuracy with real interaction complexity. The UI itself looks straightforward, but once the typing engine, scoring, persistence, responsive states, and mobile keyboard behavior were added, it became a much deeper build.
 
-To see how you can add code snippets, see below:
+One of the most useful lessons was around mobile text input. Desktop keyboard handling can lean heavily on key events, but mobile virtual keyboards behave differently and can be inconsistent. The more reliable solution was to let the hidden textarea accept input naturally, inspect the resulting value, and then map that back into the typing state.
 
-```html
-<h1>Some HTML code I'm proud of</h1>
-```
-```css
-.proud-of-this-css {
-  color: papayawhip;
-}
-```
-```js
-const proudOfThisFunc = () => {
-  console.log('🎉')
-}
-```
-
-If you want more help with writing markdown, we'd recommend checking out [The Markdown Guide](https://www.markdownguide.org/) to learn more.
-
-**Note: Delete this note and the content within this section and replace with your own learnings.**
+I also spent more time than usual on responsive interaction design instead of only responsive layout. On mobile, the controls needed to change from grouped desktop buttons into compact dropdown-based controls so the UI still felt intentional rather than just squeezed.
 
 ### Continued development
 
-Use this section to outline areas that you want to continue focusing on in future projects. These could be concepts you're still not completely comfortable with or techniques you found useful that you want to refine and perfect.
+I'm sure theres a lot more that could be added to this project, but for now I'm happy with how it turned out. If I were to keep building on it, I would consider better initial layouts for mobile, more detailed results feedback, a way to access results history from the main screen, and a special accessibility theme with extra high contrast and a clearer font.
 
-**Note: Delete this note and the content within this section and replace with your own plans for continued development.**
+I would also like to keep refining accessibility and keyboard behavior, particularly around input edge cases across different devices and browsers.
 
 ### Useful resources
 
-- [Example resource 1](https://www.example.com) - This helped me for XYZ reason. I really liked this pattern and will use it going forward.
-- [Example resource 2](https://www.example.com) - This is an amazing article which helped me finally understand XYZ. I'd recommend it to anyone still learning this concept.
+- [Nuxt documentation](https://nuxt.com/docs) - Useful for structuring the app cleanly and keeping the project organized as features expanded.
+- [Pinia documentation](https://pinia.vuejs.org/) - Helpful for state management and understanding reactive stores.
+- [Vue documentation](https://vuejs.org/guide/introduction.html) - Helpful for reactive UI state, component structure, and event handling.
+- [MDN Web Docs](https://developer.mozilla.org/) - Useful for checking browser behavior around input events, focus handling, and responsive CSS.
 
-**Note: Delete this note and replace the list above with resources that helped you during the challenge. These could come in handy for anyone viewing your solution or for yourself when you look back on this project in the future.**
+### AI collaboration
 
-### AI Collaboration
-
-Describe how you used AI tools (if any) during this project. This helps demonstrate your ability to work effectively with AI assistants.
-
-- What tools did you use (e.g., ChatGPT, Claude, GitHub Copilot)?
-- How did you use them (e.g., debugging, generating boilerplate, brainstorming solutions)?
-- What worked well? What didn't?
-
-**Note: Delete this note and the content above if you didn't use AI, or replace with your own experience.**
+I used it for generating the README itself and for creating extra test data so I had more passages available for additional typing tests.
 
 ## Author
 
-- Website - [Add your name here](https://www.your-site.com)
-- Frontend Mentor - [@yourusername](https://www.frontendmentor.io/profile/yourusername)
-- Twitter - [@yourusername](https://www.twitter.com/yourusername)
-
-**Note: Delete this note and add/remove/edit lines above based on what links you'd like to share.**
-
-## Acknowledgments
-
-This is where you can give a hat tip to anyone who helped you out on this project. Perhaps you worked in a team or got some inspiration from someone else's solution. This is the perfect place to give them some credit.
-
-**Note: Delete this note and edit this section's content as necessary. If you completed this challenge by yourself, feel free to delete this section entirely.**
+- Jack

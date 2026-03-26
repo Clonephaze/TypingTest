@@ -1,0 +1,113 @@
+@use "sass:map";
+
+// ─── Themes ──────────────────────────────────────────────────────────────────
+$themes: (
+    dark: (
+        color-scheme: dark,
+        background-color: oklch(0.1815 0 0),
+        reset-background-color: oklch(0.2697 0 0),
+        text: oklch(100% 0 0),
+        dim-text: oklch(0.6718 0.003 286.32),
+        cor-text: oklch(0.7809 0.1765 150.94),
+        incor-text: oklch(0.6092 0.173 18.11),
+        timer: oklch(0.892 0.1292 96.92),
+        cursor: oklch(0.7105 0.1563 250.98),
+        start-btn: oklch(0.6112 0.21205058784348949 258.0128014329921),
+        hover-start-btn: oklch(0.7105 0.1563 250.98),
+        divider: oklch(0.5537 0.0108 286.04)
+    ),
+    light: (
+        color-scheme: light,
+        background-color: oklch(0.96 0 0),
+        reset-background-color: oklch(0.88 0 0),
+        text: oklch(0.13 0 0),
+        dim-text: oklch(0.52 0.004 286),
+        cor-text: oklch(0.42 0.14 148),
+        incor-text: oklch(0.48 0.17 22),
+        timer: oklch(0.55 0.13 68),
+        cursor: oklch(0.55 0.21 258),
+        start-btn: oklch(0.6112 0.212 258),
+        hover-start-btn: oklch(0.50 0.22 258),
+        divider: oklch(0.72 0.005 286)
+    ),
+    retro: (
+        color-scheme: dark,
+        background-color: oklch(0.08 0.02 145),
+        reset-background-color: oklch(0.14 0.03 145),
+        text: oklch(0.82 0.18 145),
+        dim-text: oklch(0.48 0.10 145),
+        cor-text: oklch(0.72 0.26 145),
+        incor-text: oklch(0.62 0.19 25),
+        timer: oklch(0.82 0.16 85),
+        cursor: oklch(0.78 0.23 145),
+        start-btn: oklch(0.52 0.20 145),
+        hover-start-btn: oklch(0.63 0.23 145),
+        divider: oklch(0.32 0.08 145)
+    )
+);
+@each $theme-name, $theme-properties in $themes {
+    :root.#{$theme-name}-mode {
+        color-scheme: map.get($theme-properties, color-scheme);
+        background-color: #{map.get($theme-properties, background-color)};
+        color: #{map.get($theme-properties, text)};
+
+        --color-bg:              #{map.get($theme-properties, background-color)};
+        --color-reset-bg:        #{map.get($theme-properties, reset-background-color)};
+        --color-text:            #{map.get($theme-properties, text)};
+        --color-text-dim:        #{map.get($theme-properties, dim-text)};
+        --color-correct:         #{map.get($theme-properties, cor-text)};
+        --color-error:           #{map.get($theme-properties, incor-text)};
+        --color-timer:           #{map.get($theme-properties, timer)};
+        --color-cursor:          #{map.get($theme-properties, cursor)};
+        --color-btn:             #{map.get($theme-properties, start-btn)};
+        --color-btn-hover:       #{map.get($theme-properties, hover-start-btn)};
+        --color-divider:         #{map.get($theme-properties, divider)};
+    }
+}
+
+// ─── Reset ────────────────────────────────────────────────────────────────────
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+// ─── Base ─────────────────────────────────────────────────────────────────────
+html {
+    height: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-divider) transparent;
+}
+
+body {
+    min-height: 100%;
+    font-family: 'Sora', system-ui, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: calc(100dvh - 80px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
