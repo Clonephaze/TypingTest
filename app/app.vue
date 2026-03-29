@@ -129,7 +129,6 @@ header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding-right: 1.5rem;
   }
 
   .pb-label {
@@ -193,10 +192,6 @@ header {
     }
 
     .logo-text { display: none; }
-
-    .personal-best {
-      padding-right: 0;
-    }
 
     .pb-value {
       font-weight: 700;

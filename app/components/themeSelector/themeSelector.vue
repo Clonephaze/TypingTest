@@ -1,6 +1,5 @@
 <template>
     <div ref="themeWrapper" class="theme-wrapper">
-        <span aria-hidden="true">Theme</span>
         <div class="theme-menu">
             <button aria-label="Theme Selector, switch between light, dark, and retro" class="theme-selector" @click="toggleThemeMenu">
                 <Icon name="pepicons-pop:paint-pallet" ssr="true" />
@@ -77,20 +76,6 @@ onUnmounted(() => {
     margin-left: 6ch;
     margin-right: 1rem;
 
-    >span {
-        position: absolute;
-        transform: translateX(-7ch);
-        padding-top: 12px;
-        font-weight: bold;
-        opacity: 0;
-        transition: opacity 300ms ease-out;
-    }
-
-    &:hover>span {
-        opacity: 1;
-        transition: opacity 300ms ease-in;
-    }
-
     .disabled {
         cursor: not-allowed;
         pointer-events: none;
@@ -149,6 +134,7 @@ onUnmounted(() => {
     height: 0;
     overflow-y: clip;
     transition: height 200ms 200ms ease-in, visibility 0ms 200ms ease-in;
+    align-items: center;
 
     >button {
         width: fit-content;

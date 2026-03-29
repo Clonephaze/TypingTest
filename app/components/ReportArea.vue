@@ -63,13 +63,13 @@ function formatDate(ts: number) {
 
 async function downloadShareCard() {
   type Palette = { bg: string; surface: string; accent: string; text: string; sub: string; green: string; red: string; gradA: string; gradB: string }
-  const palettes: Record<string, Palette> = {
+  const palettes: { dark: Palette; light: Palette; retro: Palette } = {
     dark:  { bg: '#13131f', surface: '#1e1e2e', accent: '#4ca6ff', text: '#e8e8f4', sub: '#777788', green: '#7bcc8d', red: '#e07070', gradA: '#4ca6ff', gradB: '#f4dc73' },
     light: { bg: '#e0e0ea', surface: '#ffffff',  accent: '#2563eb', text: '#1a1a2e', sub: '#55556a', green: '#1a8a38', red: '#c0392b', gradA: '#2563eb', gradB: '#d97706' },
     retro: { bg: '#080808', surface: '#111111',  accent: '#39ff14', text: '#c8ffc0', sub: '#3a8030', green: '#39ff14', red: '#ff4444', gradA: '#39ff14', gradB: '#ff00ff' },
   }
   const theme = (colorMode.value as string).replace('-mode', '')
-  const p = palettes[theme] ?? palettes.dark
+  const p: Palette = theme in palettes ? palettes[theme as keyof typeof palettes] : palettes.dark
 
   const W = 900, H = 480, PAD = 56
   const canvas = document.createElement('canvas')
@@ -79,7 +79,7 @@ async function downloadShareCard() {
   ctx.textBaseline = 'alphabetic'
 
   const r = store.lastResult
-  const modeLabel = r?.mode === 'timed' ? `${r.duration}s timed` : 'passage'
+  const modeLabel = r?.mode === 'timed' ? `${r?.duration ?? 0}s timed` : 'passage'
   const configLabel = `${r?.difficulty ?? ''} · ${r?.category ?? ''} · ${modeLabel}`
 
   // ── Background ──
@@ -125,7 +125,7 @@ async function downloadShareCard() {
   }
 
   // Column centres
-  const cols = [176, 454, 726]
+  const cols: [number, number, number] = [176, 454, 726]
   const labelY = 148
   const valueY = 278
 
