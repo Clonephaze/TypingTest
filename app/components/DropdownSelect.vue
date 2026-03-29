@@ -39,13 +39,16 @@ function handleClickOutside(e: MouseEvent) {
 
 onMounted(() => document.addEventListener('click', handleClickOutside))
 onUnmounted(() => document.removeEventListener('click', handleClickOutside))
+
+const { app } = useRuntimeConfig()
+const base = app.baseURL
 </script>
 
 <template>
   <div ref="wrapperRef" class="dropdown-select" :class="{ open: isOpen, disabled }">
     <button class="dropdown-trigger" :disabled="disabled" @click="toggle">
       <span class="dropdown-trigger-text">{{ selectedLabel }}</span>
-      <img src="/images/icon-down-arrow.svg" alt="" aria-hidden="true" class="dropdown-arrow" />
+      <img :src="`${base}images/icon-down-arrow.svg`" alt="" aria-hidden="true" class="dropdown-arrow" />
     </button>
 
     <Transition name="dropdown">

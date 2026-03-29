@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const store = useTypingStore()
+const { app } = useRuntimeConfig()
+const base = app.baseURL
 const testAreaRef = ref<{ resetTest: () => void } | null>(null)
 const focusedMode = ref(false)
 
@@ -24,7 +26,7 @@ function handleReset() {
 
   <header>
     <div class="logo-info">
-      <img src="/images/logo-small.svg" alt="" class="logo-img" aria-hidden="true" />
+      <img :src="`${base}images/logo-small.svg`" alt="" class="logo-img" aria-hidden="true" />
       <div class="logo-text">
         <span class="logo-title">Typing Speed Test</span>
         <span class="logo-subtitle">Type as fast as you can in 60 seconds</span>

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const store = useTypingStore()
+const { app } = useRuntimeConfig()
+const base = app.baseURL
 
 const emit = defineEmits<{ reset: [] }>()
 
@@ -16,8 +18,8 @@ const resultSubtext = computed(() => {
 })
 
 const resultIcon = computed(() => {
-  if (store.isNewPersonalBest) return '/images/icon-new-pb.svg'
-  return '/images/icon-completed.svg'
+  if (store.isNewPersonalBest) return `${base}images/icon-new-pb.svg`
+  return `${base}images/icon-completed.svg`
 })
 
 const iconTheme = computed(() => store.isNewPersonalBest ? 'icon-pb' : 'icon-complete')
@@ -132,8 +134,8 @@ async function downloadShareCard() {
   <div class="report-area">
 
     <!-- Decorative stars (positioned fixed, outside content flow) -->
-    <img src="/images/pattern-star-1.svg" alt="" aria-hidden="true" class="decor-star star-left" />
-    <img src="/images/pattern-star-2.svg" alt="" aria-hidden="true" class="decor-star star-right" />
+    <img :src="`${base}images/pattern-star-1.svg`" alt="" aria-hidden="true" class="decor-star star-left" />
+    <img :src="`${base}images/pattern-star-2.svg`" alt="" aria-hidden="true" class="decor-star star-right" />
 
     <!-- ═══ Result Icon with glow rings ═══ -->
     <div class="result-icon-wrapper" :class="iconTheme">
