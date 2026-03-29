@@ -14,6 +14,7 @@ const cursorEl = ref<HTMLElement | null>(null)
 const isFocused = ref(false)
 const cursorPos = ref(0)
 const charStates = ref<CharState[]>([])
+const currentLanguage = ref<string | null>(null)
 
 // Stats (non-reactive counters for perf, reactive refs for display)
 let totalPresses = 0
@@ -90,6 +91,7 @@ function loadPassage() {
   const pool = cat === 'standard' ? passages[store.difficulty] : passages[cat]
   const entry = pool[Math.floor(Math.random() * pool.length)]!
   charStates.value = entry.text.split('').map(c => ({ char: c, status: 'pending' as const }))
+  currentLanguage.value = entry.language ?? null
   cursorPos.value = 0
   correctCount = 0
   totalPresses = 0
@@ -419,13 +421,14 @@ defineExpose({ resetTest })
       </Transition>
 
       <!-- Passage text -->
-      <div ref="passageContainerRef" class="passage" :class="{ blurred: store.phase === 'idle' }">
+      <div ref="passageContainerRef" class="passage" :class="{ blurred: store.phase === 'idle', 'code-mode': store.category === 'code' }">
+        <span v-if="store.category === 'code' && currentLanguage" class="language-badge">{{ currentLanguage }}</span>
         <span
           v-for="(item, i) in charStates"
           :key="i"
           :ref="(el) => { if (i === cursorPos) cursorEl = el as HTMLElement | null }"
           class="char"
-          :class="[item.status, { cursor: i === cursorPos, 'cursor-active': isFocused && i === cursorPos }]"
+          :class="[item.status, { cursor: i === cursorPos, 'cursor-active': isFocused && i === cursorPos, 'char-newline': item.char === '\n' }]"
         >{{ item.char }}</span>
       </div>
     </div>
@@ -728,6 +731,17 @@ defineExpose({ resetTest })
   line-height: 1.65;
   letter-spacing: 0.01em;
 
+  &.code-mode {
+    font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 1.1rem;
+    line-height: 1.85;
+    letter-spacing: 0;
+
+    @media (max-width: 600px) {
+      font-size: 0.85rem;
+    }
+  }
+
   &.blurred {
     filter: blur(4px);
     user-select: none;
@@ -738,6 +752,23 @@ defineExpose({ resetTest })
     font-size: 1.375rem;
     line-height: 1.6;
   }
+}
+
+.language-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  border-radius: 4px;
+  padding: 0.15em 0.5em;
+  margin-bottom: 0.75rem;
+  pointer-events: none;
+  user-select: none;
 }
 
 .char {
@@ -763,6 +794,17 @@ defineExpose({ resetTest })
 
   &.cursor.cursor-active {
     animation: cursor-block-blink 1s step-end infinite;
+  }
+}
+
+.char-newline {
+  &::after {
+    content: '↵';
+    opacity: 0.25;
+    font-size: 0.6em;
+    vertical-align: super;
+    font-family: sans-serif;
+    pointer-events: none;
   }
 }
 

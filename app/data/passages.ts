@@ -1,6 +1,7 @@
 export interface Passage {
   id: string
   text: string
+  language?: string
 }
 
 export interface PassageData {
@@ -61,15 +62,171 @@ export const passages: PassageData = {
     { id: 'quote-10', text: 'It is during our darkest moments that we must focus to see the light. Happiness is not something readymade. It comes from your own actions. Examine the nature of mind and you will find there is no darkness. — Aristotle' },
   ],
   code: [
-    { id: 'code-1', text: 'const fibonacci = (n: number): number => n <= 1 ? n : fibonacci(n - 1) + fibonacci(n - 2); const result = Array.from({ length: 10 }, (_, i) => fibonacci(i)); console.log(result);' },
-    { id: 'code-2', text: 'function debounce<T extends (...args: unknown[]) => void>(fn: T, delay: number): T { let timer: ReturnType<typeof setTimeout>; return ((...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); }) as T; }' },
-    { id: 'code-3', text: 'const fetchUsers = async (url: string) => { const res = await fetch(url); if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); }; const users = await fetchUsers(\'/api/users\').then(data => data.filter((u: User) => u.active));' },
-    { id: 'code-4', text: 'class EventEmitter { private listeners: Record<string, Function[]> = {}; on(event: string, fn: Function) { (this.listeners[event] ??= []).push(fn); } emit(event: string, ...args: unknown[]) { this.listeners[event]?.forEach(fn => fn(...args)); } }' },
-    { id: 'code-5', text: 'const memoize = <T>(fn: (...args: unknown[]) => T) => { const cache = new Map<string, T>(); return (...args: unknown[]) => { const key = JSON.stringify(args); return cache.has(key) ? cache.get(key)! : (cache.set(key, fn(...args)), fn(...args)); }; };' },
-    { id: 'code-6', text: 'import { ref, computed, watch } from \'vue\'; const count = ref(0); const doubled = computed(() => count.value * 2); const history: number[] = []; watch(count, (val, prev) => { history.push(val); console.log(`Changed from ${prev} to ${val}`); });' },
-    { id: 'code-7', text: 'SELECT u.name, COUNT(o.id) AS order_count, SUM(o.total) AS revenue FROM users u LEFT JOIN orders o ON u.id = o.user_id WHERE u.created_at > \'2024-01-01\' GROUP BY u.id HAVING order_count > 5 ORDER BY revenue DESC LIMIT 20;' },
-    { id: 'code-8', text: 'const quicksort = <T>(arr: T[], compare = (a: T, b: T) => a < b): T[] => { if (arr.length <= 1) return arr; const [pivot, ...rest] = arr; return [...quicksort(rest.filter(x => compare(x, pivot)), compare), pivot, ...quicksort(rest.filter(x => !compare(x, pivot)), compare)]; };' },
-    { id: 'code-9', text: 'const useLocalStorage = <T>(key: string, defaultValue: T) => { const stored = localStorage.getItem(key); const value = ref<T>(stored ? JSON.parse(stored) : defaultValue); watch(value, (v) => localStorage.setItem(key, JSON.stringify(v)), { deep: true }); return value; };' },
-    { id: 'code-10', text: 'type Result<T, E = Error> = { ok: true; value: T } | { ok: false; error: E }; const tryCatch = async <T>(fn: () => Promise<T>): Promise<Result<T>> => { try { return { ok: true, value: await fn() }; } catch (e) { return { ok: false, error: e as Error }; } };' },
+    {
+      id: 'code-1',
+      language: 'Python',
+      text: `def binary_search(arr, target):
+  lo, hi = 0, len(arr) - 1
+  while lo <= hi:
+    mid = (lo + hi) // 2
+    if arr[mid] == target:
+      return mid
+    elif arr[mid] < target:
+      lo = mid + 1
+    else:
+      hi = mid - 1
+  return -1`,
+    },
+    {
+      id: 'code-2',
+      language: 'TypeScript',
+      text: `async function retry<T>(
+  fn: () => Promise<T>,
+  attempts = 3
+): Promise<T> {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn()
+    } catch (err) {
+      if (i === attempts - 1) throw err
+    }
+  }
+  throw new Error('unreachable')
+}`,
+    },
+    {
+      id: 'code-3',
+      language: 'Go',
+      text: `func fibonacci(n int) int {
+  if n <= 1 {
+    return n
+  }
+  a, b := 0, 1
+  for i := 2; i <= n; i++ {
+    a, b = b, a+b
+  }
+  return b
+}
+
+func main() {
+  for i := 0; i <= 10; i++ {
+    fmt.Println(fibonacci(i))
+  }
+}`,
+    },
+    {
+      id: 'code-4',
+      language: 'Rust',
+      text: `fn is_prime(n: u64) -> bool {
+  if n < 2 { return false; }
+  if n == 2 { return true; }
+  if n % 2 == 0 { return false; }
+  let mut i = 3u64;
+  while i * i <= n {
+    if n % i == 0 { return false; }
+    i += 2;
+  }
+  true
+}`,
+    },
+    {
+      id: 'code-5',
+      language: 'CSS',
+      text: `.card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  background: var(--surface);
+  box-shadow: 0 2px 8px hsl(0 0% 0% / 0.15);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}`,
+    },
+    {
+      id: 'code-6',
+      language: 'JavaScript',
+      text: `function debounce(fn, delay) {
+  let timer
+  return function (...args) {
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      fn.apply(this, args)
+    }, delay)
+  }
+}
+
+const search = debounce((query) => {
+  console.log('searching:', query)
+}, 300)`,
+    },
+    {
+      id: 'code-7',
+      language: 'SQL',
+      text: `SELECT
+  u.name,
+  COUNT(o.id) AS orders,
+  SUM(o.total) AS revenue
+FROM users u
+JOIN orders o ON o.user_id = u.id
+WHERE u.active = true
+  AND o.created_at >= '2024-01-01'
+GROUP BY u.id
+HAVING COUNT(o.id) > 2
+ORDER BY revenue DESC
+LIMIT 20;`,
+    },
+    {
+      id: 'code-8',
+      language: 'HTML',
+      text: `<article class="card">
+  <header class="card-header">
+    <h2 class="card-title">Post Title</h2>
+    <time datetime="2025-01-01">January 1, 2025</time>
+  </header>
+  <p class="card-body">
+    A short description of the article content.
+  </p>
+  <footer class="card-footer">
+    <a href="/article/1">Read more</a>
+  </footer>
+</article>`,
+    },
+    {
+      id: 'code-9',
+      language: 'Bash',
+      text: `#!/bin/bash
+BACKUP="$HOME/backups/$(date +%Y-%m-%d)"
+mkdir -p "$BACKUP"
+
+for file in ~/Documents/*.txt; do
+  cp "$file" "$BACKUP/"
+  echo "Backed up: $file"
+done
+
+echo "Done. Files saved to $BACKUP"`,
+    },
+    {
+      id: 'code-10',
+      language: 'Python',
+      text: `class Stack:
+  def __init__(self):
+    self._items = []
+
+  def push(self, item):
+    self._items.append(item)
+
+  def pop(self):
+    if not self._items:
+      raise IndexError("pop from empty stack")
+    return self._items.pop()
+
+  def peek(self):
+    return self._items[-1]`,
+    },
   ],
 }
