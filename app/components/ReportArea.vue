@@ -2,6 +2,7 @@
 const store = useTypingStore()
 const { app } = useRuntimeConfig()
 const base = app.baseURL
+const colorMode = useColorMode()
 
 const emit = defineEmits<{ reset: [] }>()
 
@@ -61,70 +62,148 @@ function formatDate(ts: number) {
 }
 
 async function downloadShareCard() {
+  type Palette = { bg: string; surface: string; accent: string; text: string; sub: string; green: string; red: string; gradA: string; gradB: string }
+  const palettes: Record<string, Palette> = {
+    dark:  { bg: '#13131f', surface: '#1e1e2e', accent: '#4ca6ff', text: '#e8e8f4', sub: '#777788', green: '#7bcc8d', red: '#e07070', gradA: '#4ca6ff', gradB: '#f4dc73' },
+    light: { bg: '#e0e0ea', surface: '#ffffff',  accent: '#2563eb', text: '#1a1a2e', sub: '#55556a', green: '#1a8a38', red: '#c0392b', gradA: '#2563eb', gradB: '#d97706' },
+    retro: { bg: '#080808', surface: '#111111',  accent: '#39ff14', text: '#c8ffc0', sub: '#3a8030', green: '#39ff14', red: '#ff4444', gradA: '#39ff14', gradB: '#ff00ff' },
+  }
+  const theme = (colorMode.value as string).replace('-mode', '')
+  const p = palettes[theme] ?? palettes.dark
+
+  const W = 900, H = 480, PAD = 56
   const canvas = document.createElement('canvas')
-  canvas.width = 800
-  canvas.height = 420
+  canvas.width = W
+  canvas.height = H
   const ctx = canvas.getContext('2d')!
+  ctx.textBaseline = 'alphabetic'
 
-  // Background
-  ctx.fillStyle = '#1a1a1a'
-  ctx.fillRect(0, 0, 800, 420)
+  const r = store.lastResult
+  const modeLabel = r?.mode === 'timed' ? `${r.duration}s timed` : 'passage'
+  const configLabel = `${r?.difficulty ?? ''} · ${r?.category ?? ''} · ${modeLabel}`
 
-  // Accent line top
-  const grad = ctx.createLinearGradient(0, 0, 800, 0)
-  grad.addColorStop(0, '#4ca6ff')
-  grad.addColorStop(1, '#f4dc73')
+  // ── Background ──
+  ctx.fillStyle = p.bg
+  ctx.fillRect(0, 0, W, H)
+
+  // ── Surface card ──
+  ctx.fillStyle = p.surface
+  ctx.beginPath()
+  ctx.roundRect(PAD - 16, 20, W - (PAD - 16) * 2, H - 40, 14)
+  ctx.fill()
+
+  // ── Top gradient bar (over card) ──
+  const grad = ctx.createLinearGradient(0, 0, W, 0)
+  grad.addColorStop(0, p.gradA)
+  grad.addColorStop(1, p.gradB)
   ctx.fillStyle = grad
-  ctx.fillRect(0, 0, 800, 4)
+  ctx.fillRect(0, 0, W, 6)
 
-  // Title
-  ctx.fillStyle = '#ffffff'
-  ctx.font = 'bold 28px Sora, sans-serif'
-  ctx.fillText('Typing Speed Test', 50, 64)
+  // ── Title ──
+  ctx.fillStyle = p.accent
+  ctx.font = 'bold 18px Sora, sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText('TYPING SPEED TEST', PAD, 68)
 
-  // WPM Big
-  ctx.fillStyle = '#4ca6ff'
-  ctx.font = 'bold 96px Sora, sans-serif'
-  ctx.fillText(String(store.lastResult?.wpm ?? 0), 50, 200)
-  ctx.fillStyle = '#888'
-  ctx.font = '600 20px Sora, sans-serif'
-  ctx.fillText('WPM', 50, 230)
-
-  // Accuracy
-  ctx.fillStyle = '#7bcc8d'
-  ctx.font = 'bold 48px Sora, sans-serif'
-  ctx.fillText(`${store.lastResult?.accuracy ?? 0}%`, 280, 190)
-  ctx.fillStyle = '#888'
-  ctx.font = '600 20px Sora, sans-serif'
-  ctx.fillText('Accuracy', 280, 220)
-
-  // Characters
-  const correct = store.lastResult?.correctChars ?? 0
-  const incorrect = store.lastResult?.incorrectChars ?? 0
-  ctx.fillStyle = '#7bcc8d'
-  ctx.font = 'bold 36px Sora, sans-serif'
-  ctx.fillText(String(correct), 460, 175)
-  ctx.fillStyle = '#888'
-  ctx.font = '600 18px Sora, sans-serif'
-  ctx.fillText('/', 460 + ctx.measureText(String(correct)).width + 4, 175)
-  ctx.fillStyle = '#e07070'
-  ctx.font = 'bold 36px Sora, sans-serif'
-  ctx.fillText(String(incorrect), 460 + ctx.measureText(String(correct)).width + 20, 175)
-  ctx.fillStyle = '#888'
-  ctx.font = '600 18px Sora, sans-serif'
-  ctx.fillText('Characters', 460, 205)
-
-  // Footer
-  ctx.fillStyle = '#555'
-  ctx.font = '400 14px Sora, sans-serif'
-  ctx.fillText(`${store.lastResult?.difficulty ?? ''} · ${store.lastResult?.category ?? ''} · ${store.lastResult?.duration ?? 0}s`, 50, 380)
-  ctx.fillStyle = '#333'
+  // ── Config subtitle ──
+  ctx.fillStyle = p.sub
   ctx.font = '400 13px Sora, sans-serif'
-  ctx.fillText(new Date().toLocaleDateString(), 700, 400)
+  ctx.fillText(configLabel, PAD, 91)
 
+  // ── Header divider ──
+  ctx.strokeStyle = p.sub + '44'
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(PAD, 108); ctx.lineTo(W - PAD, 108)
+  ctx.stroke()
+
+  // ── Column separators ──
+  for (const x of [316, 592]) {
+    ctx.beginPath()
+    ctx.moveTo(x, 116); ctx.lineTo(x, H - 56)
+    ctx.stroke()
+  }
+
+  // Column centres
+  const cols = [176, 454, 726]
+  const labelY = 148
+  const valueY = 278
+
+  // ── WPM ──
+  ctx.fillStyle = p.sub
+  ctx.font = '600 12px Sora, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('WPM', cols[0], labelY)
+  ctx.fillStyle = p.accent
+  ctx.font = 'bold 96px Sora, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText(String(r?.wpm ?? 0), cols[0], valueY)
+
+  // ── Accuracy ──
+  ctx.fillStyle = p.sub
+  ctx.font = '600 12px Sora, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('ACCURACY', cols[1], labelY)
+  ctx.fillStyle = p.green
+  ctx.font = 'bold 72px Sora, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText(`${r?.accuracy ?? 0}%`, cols[1], valueY)
+
+  // ── Characters ──
+  ctx.fillStyle = p.sub
+  ctx.font = '600 12px Sora, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('CHARACTERS', cols[2], labelY)
+
+  // Measure all parts first, then draw left-to-right
+  const bigF = 'bold 48px Sora, sans-serif'
+  const sepF = '400 38px Sora, sans-serif'
+  const correctStr = String(r?.correctChars ?? 0)
+  const incorrectStr = String(r?.incorrectChars ?? 0)
+
+  ctx.font = bigF
+  const cW = ctx.measureText(correctStr).width
+  const iW = ctx.measureText(incorrectStr).width
+  ctx.font = sepF
+  const sW = ctx.measureText(' / ').width
+
+  const totalW = cW + sW + iW
+  let cx = cols[2] - totalW / 2
+
+  ctx.textAlign = 'left'
+  ctx.font = bigF
+  ctx.fillStyle = p.green
+  ctx.fillText(correctStr, cx, valueY - 8)
+  cx += cW
+
+  ctx.font = sepF
+  ctx.fillStyle = p.sub
+  ctx.fillText(' / ', cx, valueY - 8)
+  cx += sW
+
+  ctx.font = bigF
+  ctx.fillStyle = p.red
+  ctx.fillText(incorrectStr, cx, valueY - 8)
+
+  // ── Footer divider ──
+  ctx.strokeStyle = p.sub + '44'
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(PAD, H - 52); ctx.lineTo(W - PAD, H - 52)
+  ctx.stroke()
+
+  // ── Footer text ──
+  ctx.fillStyle = p.sub
+  ctx.font = '400 12px Sora, sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText(new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }), PAD, H - 28)
+  ctx.textAlign = 'right'
+  ctx.fillText('Typing Speed Test', W - PAD, H - 28)
+
+  // ── Export ──
   const url = canvas.toDataURL('image/png')
   const link = document.createElement('a')
-  link.download = `typing-test-${store.lastResult?.wpm ?? 0}wpm.png`
+  link.download = `typing-test-${r?.wpm ?? 0}wpm.png`
   link.href = url
   link.click()
 }
